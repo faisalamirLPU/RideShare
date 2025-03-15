@@ -1,0 +1,247 @@
+/* 🌍 Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* ✅ Header Styling */
+header {
+    background: #000;
+    color: #fff;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+header nav ul {
+    list-style: none;
+    display: flex;
+}
+
+header nav ul li {
+    margin: 0 15px;
+}
+
+header nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+/* 🎯 Hero Section */
+.hero-section {
+    text-align: center;
+    padding: 50px 20px;
+    background: url('../images/hero-bg.jpg') no-repeat center center/cover;
+    color: #fff;
+}
+
+.hero-section h1 {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.hero-section p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.hero-section .btn {
+    display: inline-block;
+    padding: 12px 20px;
+    margin: 10px;
+    background: #ff5733;
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.hero-section .btn:hover {
+    background: #e44d26;
+}
+
+/* 📌 Ride List */
+.ride-list {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.ride-list h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.rides-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.ride-card {
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.ride-card h3 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.ride-card p {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.ride-card .btn {
+    display: inline-block;
+    padding: 10px 15px;
+    background: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.ride-card .btn:hover {
+    background: #0056b3;
+}
+
+/* ✅ Forms */
+form {
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+form input,
+form select,
+form textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+form .btn {
+    display: block;
+    width: 100%;
+    background: #28a745;
+    color: #fff;
+    padding: 12px;
+    text-align: center;
+    border-radius: 5px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+form .btn:hover {
+    background: #218838;
+}
+
+/* 📌 Footer */
+footer {
+    background: #000;
+    color: #fff;
+    text-align: center;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+/* 🎯 Responsive Design */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 30px;
+    }
+
+    .hero-section p {
+        font-size: 16px;
+    }
+
+    .ride-list {
+        padding: 15px;
+    }
+
+    .rides-container {
+        grid-template-columns: 1fr;
+    }
+
+    form {
+        width: 90%;
+    }
+}
+
+
+
+
+#chatbot-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    text-align: right;
+}
+
+#chatbot {
+    display: none;
+    width: 250px;
+    height: 300px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#chatbot-toggle {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+#chat-messages {
+    height: 200px;
+    overflow-y: auto;
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+#chat-input {
+    width: 75%;
+    padding: 5px;
+    border: 1px solid #ddd;
+}
+
+#send-message {
+    width: 20%;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+}
