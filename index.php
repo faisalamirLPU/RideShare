@@ -26,7 +26,7 @@ require_once "database/db_config.php";
     <h2>Available Rides</h2>
     <div class="rides-container">
         <?php
-        // Fetch available rides
+        // Fetch available rides with error handling
         $query = $conn->query("SELECT r.*, d.vehicle_model, u.name AS driver_name 
                                FROM rides r
                                JOIN drivers d ON r.driver_id = d.id
@@ -34,21 +34,26 @@ require_once "database/db_config.php";
                                WHERE r.status = 'active'
                                ORDER BY r.created_at DESC
                                LIMIT 5");
-
-        // Check if rides are available
-        if ($query->num_rows > 0) {  // ✅ Fixed from rowCount() to num_rows
-            while ($ride = $query->fetch_assoc()) {  // ✅ Use fetch_assoc() for MySQLi
-                echo "<div class='ride-card'>
-                        <h3>{$ride['pickup_location']} → {$ride['drop_location']}</h3>
-                        <p>Driver: {$ride['driver_name']}</p>
-                        <p>Vehicle: {$ride['vehicle_model']}</p>
-                        <p>Fare: ₹{$ride['fare']}</p>
-                        <p>Seats Available: {$ride['seats_available']}</p>
-                        <a href='rides/ride_details.php?id={$ride['id']}' class='btn'>View Details</a>
-                      </div>";
-            }
+        
+        // Check for SQL errors
+        if (!$query) {
+            echo "<p class='error'>Error fetching rides: " . $conn->error . "</p>";
         } else {
-            echo "<p>No rides available at the moment.</p>";
+            // Check if rides are available
+            if ($query->num_rows > 0) {
+                while ($ride = $query->fetch_assoc()) {
+                    echo "<div class='ride-card'>
+                            <h3>" . htmlspecialchars($ride['pickup_location']) . " → " . htmlspecialchars($ride['drop_location']) . "</h3>
+                            <p>Driver: " . htmlspecialchars($ride['driver_name']) . "</p>
+                            <p>Vehicle: " . htmlspecialchars($ride['vehicle_model']) . "</p>
+                            <p>Fare: ₹" . htmlspecialchars($ride['fare']) . "</p>
+                            <p>Seats Available: " . htmlspecialchars($ride['seats_available']) . "</p>
+                            <a href='rides/ride_details.php?id=" . urlencode($ride['id']) . "' class='btn'>View Details</a>
+                          </div>";
+                }
+            } else {
+                echo "<p>No rides available at the moment.</p>";
+            }
         }
         ?>
     </div>

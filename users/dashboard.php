@@ -29,8 +29,8 @@ $stmt_bookings->bind_param("i", $user_id);
 $stmt_bookings->execute();
 $result_bookings = $stmt_bookings->get_result();
 
-// Fetch rides posted by the user (for drivers)
-$sql_rides = "SELECT pickup_location, drop_location, travel_date, travel_time, available_seats 
+// ✅ FIX: Changed `available_seats` to `seats_available`
+$sql_rides = "SELECT pickup_location, drop_location, travel_date, travel_time, seats_available 
               FROM rides WHERE driver_id = ? ORDER BY travel_date ASC";
 $stmt_rides = $conn->prepare($sql_rides);
 $stmt_rides->bind_param("i", $user_id);
@@ -53,7 +53,7 @@ $result_rides = $stmt_rides->get_result();
         <h2>Welcome, <?php echo htmlspecialchars($user['name']); ?>!</h2>
 
         <div class="dashboard-actions">
-            <a href="../rides/available_rides.php" class="dashboard-btn">Book a Ride</a>
+            <a href="../rides/book_ride.php" class="dashboard-btn">Book a Ride</a>
             <a href="../rides/post_ride.php" class="dashboard-btn">Post a Ride</a>
         </div>
 
@@ -102,7 +102,7 @@ $result_rides = $stmt_rides->get_result();
                             <td><?php echo htmlspecialchars($ride['drop_location']); ?></td>
                             <td><?php echo $ride['travel_date']; ?></td>
                             <td><?php echo $ride['travel_time']; ?></td>
-                            <td><?php echo $ride['available_seats']; ?></td>
+                            <td><?php echo $ride['seats_available']; ?></td>
                         </tr>
                     <?php } ?>
                 </table>

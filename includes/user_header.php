@@ -24,7 +24,7 @@ $user_type = $_SESSION['user_type'] ?? null; // 'passenger' or 'driver'
             <a href="../index.php">RideShare</a>
         </div>
         <ul class="nav-links">
-            <li><a href="../rides/available_rides.php">Find a Ride</a></li>
+            <li><a href="../rides/book_ride.php">Find a Ride</a></li>
             <?php if ($user_logged_in): ?>
                 <?php if ($user_type === 'driver'): ?>
                     <li><a href="../rides/post_ride.php">Post a Ride</a></li>
@@ -32,7 +32,7 @@ $user_type = $_SESSION['user_type'] ?? null; // 'passenger' or 'driver'
                 <?php else: ?>
                     <li><a href="../users/my_bookings.php">My Bookings</a></li>
                 <?php endif; ?>
-                <li><a href="../users/dashboard.php">Dashboard</a></li>
+                <!-- <li><a href="../users/dashboard.php">Dashboard</a></li> -->
                 <li><a href="../auth/logout.php">Logout</a></li>
             <?php else: ?>
                 <li><a href="./auth/login.php">Login</a></li>
