@@ -57,8 +57,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body class="text-white min-h-screen bg-black bg-opacity-40 backdrop-blur-md">
+  <?php include('../includes/header.php'); ?>
   <!-- Navbar -->
-  <nav class="backdrop-blur-md bg-black/60 p-5 px-10 flex justify-between items-center shadow-lg">
+  <!-- <nav class="backdrop-blur-md bg-black/60 p-5 px-10 flex justify-between items-center shadow-lg">
     <h1 class="text-4xl font-bold tracking-wider text-yellow-400">Ride<span class="text-white">Share</span></h1>
     <ul class="flex space-x-8 text-lg font-semibold">
       <li><a href="../index.php" class="hover:text-yellow-400 transition">Home</a></li>
@@ -67,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <li><a href="register.php" class="hover:text-yellow-400 transition">Register</a></li>
       <li><a href="../rides/offer_ride.php" class="hover:text-yellow-400 transition">Offer Ride</a></li>
     </ul>
-  </nav>
+  </nav> -->
 
   <!-- Login Form -->
   <section class="flex justify-center items-center h-screen -mt-20">

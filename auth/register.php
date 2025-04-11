@@ -7,14 +7,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
     $phone = trim($_POST['phone']);
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-    $user_type = trim($_POST['user_type']); // 'passenger' or 'driver'
+    $user_type = 'user'; // Default user type
 
     // Check if email or phone already exists
     $checkUser = $conn->prepare("SELECT id FROM users WHERE email = ? OR phone = ?");
     if (!$checkUser) {
         die("Prepare failed: " . $conn->error);
     }
-    
+
     $checkUser->bind_param("ss", $email, $phone);
     $checkUser->execute();
     $checkUser->store_result();
@@ -44,6 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -93,13 +94,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="password" id="confirm_password" name="confirm_password" required class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-white/70 focus:ring-2 focus:ring-yellow-400 border border-white/30">
       </div>
 
-      <div>
+      <!-- <div>
         <label for="user_type" class="block text-white font-semibold mb-2">Register as:</label>
         <select id="user_type" name="user_type" required class="w-full p-3 rounded-xl bg-white/20 text-white focus:ring-2 focus:ring-yellow-400 border border-white/30">
           <option value="passenger">Passenger</option>
           <option value="driver">Driver</option>
         </select>
-      </div>
+      </div> -->
 
       <button type="submit" class="w-full bg-yellow-400 hover:bg-yellow-500 text-black p-3 rounded-full font-bold text-lg transition">Register</button>
     </form>

@@ -35,7 +35,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
             <a href="manage_bookings.php" class="hover:text-yellow-400 font-medium">Bookings</a>
             <a href="manage_payments.php" class="hover:text-yellow-400 font-medium">Payments</a>
             <a href="verify_driver.php" class="hover:text-yellow-400 font-medium">Approve Driver</a>
-            <a href="../auth/logout.php" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition">Logout</a>
+            <a href="./logout.php" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition">Logout</a>
         </div>
     </div>
 </nav>
