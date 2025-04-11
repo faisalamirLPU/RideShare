@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../database/db_config.php';
+require_once 'database/db_config.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
@@ -29,13 +29,18 @@ $stmt_bookings->bind_param("i", $user_id);
 $stmt_bookings->execute();
 $result_bookings = $stmt_bookings->get_result();
 
-$sql_rides = "SELECT pickup_location, drop_location, travel_date, travel_time, seats_available 
-              FROM rides WHERE driver_id = ? ORDER BY travel_date ASC";
+// ✅ Updated ride query to join with drivers table
+$sql_rides = "SELECT r.pickup_location, r.drop_location, r.travel_date, r.travel_time, r.seats_available 
+              FROM rides r
+              JOIN drivers d ON r.driver_id = d.id
+              WHERE d.user_id = ?
+              ORDER BY r.travel_date ASC";
 $stmt_rides = $conn->prepare($sql_rides);
 $stmt_rides->bind_param("i", $user_id);
 $stmt_rides->execute();
 $result_rides = $stmt_rides->get_result();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -54,7 +59,7 @@ $result_rides = $stmt_rides->get_result();
   </style>
 </head>
 <body class="text-white min-h-screen bg-black bg-opacity-50 backdrop-blur-md">
-  <?php include '../includes/user_header.php'; ?>
+  <?php include './includes/header.php'; ?>
 
   <div class="max-w-5xl mx-auto px-6 py-12">
     <h2 class="text-4xl font-bold mb-8">Welcome, <?php echo htmlspecialchars($user['name']); ?> 👋</h2>

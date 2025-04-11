@@ -66,7 +66,7 @@ $bookings = $stmt->get_result();
 </head>
 <body>
 
-<?php include "../includes/user_header.php"; ?>
+<?php include "../includes/header.php"; ?>
 
 <div class="dashboard-container">
     <h2>Manage Booking Requests</h2>

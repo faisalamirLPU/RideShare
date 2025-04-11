@@ -52,6 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body>
+<?php include '../includes/user_header.php'; ?>
     <div class="ride-approval-container">
         <h2>Ride Booking Requests</h2>
         <?php if (!empty($message)) echo "<p class='message'>$message</p>"; ?>

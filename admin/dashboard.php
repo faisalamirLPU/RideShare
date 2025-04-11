@@ -1,70 +1,56 @@
 <?php
 session_start();
-require_once "../database/db_config.php";
+include('../database/db_config.php');
+include('include/header.php');
 
-// Check if the admin is logged in
+// Simple authentication check
 if (!isset($_SESSION['admin_id'])) {
-    header("Location: admin_login.php");
-    exit();
+  header("Location: login.php");
+  exit();
 }
 
-// Fetch counts for dashboard statistics
-$total_users = $conn->query("SELECT COUNT(*) AS count FROM users")->fetch_assoc()['count'];
-$total_rides = $conn->query("SELECT COUNT(*) AS count FROM rides")->fetch_assoc()['count'];
-$total_bookings = $conn->query("SELECT COUNT(*) AS count FROM bookings")->fetch_assoc()['count'];
-
-$result = $conn->query("SELECT SUM(amount) AS total FROM payments WHERE payment_status = 'success'");
-$total_payments = $result->fetch_assoc()['total'] ?? 0; // Handle NULL values
-
+// Fetch counts
+$users = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM users WHERE user_type='user'"));
+$drivers = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM drivers"));
+$rides = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM rides"));
+$bookings = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM bookings"));
+$payments = mysqli_fetch_assoc(mysqli_query($conn, "SELECT SUM(amount) AS total FROM payments WHERE payment_status='success'"));
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
-</head>
-<body>
-
-<?php include 'admin_header.php'; ?>
-
-<div class="admin-dashboard">
-    <h1>Welcome, Admin</h1>
-    
-    <div class="dashboard-stats">
-    <div class="stat-box">
-            <h2><a href="admin_verify.php">Verify Driver</a></h2>
-            
-        </div>
-        <div class="stat-box">
-            <h2>Total Users</h2>
-            <p><?php echo $total_users; ?></p>
-        </div>
-        <div class="stat-box">
-            <h2>Total Rides</h2>
-            <p><?php echo $total_rides; ?></p>
-        </div>
-        <div class="stat-box">
-            <h2>Total Bookings</h2>
-            <p><?php echo $total_bookings; ?></p>
-        </div>
-        <div class="stat-box">
-            <h2>Total Revenue</h2>
-            <p>₹<?php echo number_format($total_payments, 2); ?></p>
-        </div>
+<div class="p-10 bg-gray-100 min-h-screen">
+  <h2 class="text-3xl font-bold mb-6 text-gray-800">Admin Dashboard</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Users -->
+    <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+      <h3 class="text-lg font-semibold text-blue-700">Total Users</h3>
+      <p class="text-3xl font-bold text-gray-900 mt-2"><?= $users['total'] ?></p>
     </div>
 
-    <div class="dashboard-links">
-        <a href="manage_users.php">Manage Users</a>
-        <a href="manage_rides.php">Manage Rides</a>
-        <a href="manage_bookings.php">Manage Bookings</a>
-        <a href="manage_payments.php">Manage Payments</a>
+    <!-- Drivers -->
+    <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+      <h3 class="text-lg font-semibold text-green-700">Drivers</h3>
+      <p class="text-3xl font-bold text-gray-900 mt-2"><?= $drivers['total'] ?></p>
     </div>
+
+    <!-- Rides -->
+    <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+      <h3 class="text-lg font-semibold text-purple-700">Rides</h3>
+      <p class="text-3xl font-bold text-gray-900 mt-2"><?= $rides['total'] ?></p>
+    </div>
+
+    <!-- Bookings -->
+    <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+      <h3 class="text-lg font-semibold text-yellow-700">Bookings</h3>
+      <p class="text-3xl font-bold text-gray-900 mt-2"><?= $bookings['total'] ?></p>
+    </div>
+
+    <!-- Earnings -->
+    <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+      <h3 class="text-lg font-semibold text-rose-700">Total Earnings</h3>
+      <p class="text-3xl font-bold text-gray-900 mt-2">₹<?= $payments['total'] ?? 0 ?></p>
+    </div>
+  </div>
 </div>
 
-<?php include 'admin_footer.php'; ?>
 
-</body>
-</html>
+<?php include('include/footer.php'); ?>

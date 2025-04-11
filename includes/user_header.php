@@ -29,7 +29,9 @@ $user_type = $_SESSION['user_type'] ?? null; // 'passenger' or 'driver'
                 <?php if ($user_type === 'driver'): ?>
                     <li><a href="../rides/post_ride.php">Post a Ride</a></li>
                     <li><a href="../users/my_rides.php">My Rides</a></li>
+                    <li><a href="../rides/choose_ride.php">Manage Requests</a></li>
                 <?php else: ?>
+
                     <li><a href="../users/my_bookings.php">My Bookings</a></li>
                 <?php endif; ?>
                 <!-- <li><a href="../users/dashboard.php">Dashboard</a></li> -->
@@ -42,24 +44,4 @@ $user_type = $_SESSION['user_type'] ?? null; // 'passenger' or 'driver'
     </nav>
 </header>
 
-<!-- Chatbot Widget -->
-<div id="chatbot-container">
-    <iframe src="../chatbot/chatbot.php" frameborder="0">
-        <!-- <div id="chatbot-container">
-        <button id="chatbot-toggle">💬 Chat</button>
-        <div id="chatbot">
-            <div id="chat-messages"></div>
-            <input type="text" id="chat-input" placeholder="Ask me anything..." />
-            <button id="send-message">Send</button>
-        </div>
-        </div> -->
 
-    </iframe>
-    <button id="chatbot-toggle">💬 Chat</button>
-        <div id="chatbot">
-            <div id="chat-messages"></div>
-            <input type="text" id="chat-input" placeholder="Ask me anything..." />
-            <button id="send-message">Send</button>
-        </div>
-    
-</div>

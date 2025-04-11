@@ -3,7 +3,7 @@ session_start();
 include '../database/db_config.php';
 
 // Check if user is logged in and is a passenger
-if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'passenger') {
+if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'user') {
     header("Location: ../auth/login.php");
     exit();
 }
@@ -73,32 +73,36 @@ if (!$result) {
     <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body>
-    <div class="ride-list-container">
-        <h2>Available Rides</h2>
-        <?php if (!empty($message)) echo "<p class='message'>$message</p>"; ?>
 
-        <?php if ($result->num_rows > 0): ?>
-            <?php while ($ride = $result->fetch_assoc()): ?>
-                <div class="ride-card">
-                    <p><strong>From:</strong> <?= htmlspecialchars($ride['pickup_location']) ?></p>
-                    <p><strong>To:</strong> <?= htmlspecialchars($ride['drop_location']) ?></p>
-                    <p><strong>Date:</strong> <?= htmlspecialchars($ride['travel_date']) ?></p>
-                    <p><strong>Time:</strong> <?= htmlspecialchars($ride['travel_time']) ?></p>
-                    <p><strong>Seats Available:</strong> <?= $ride['seats_available'] ?></p>
-                    <p><strong>Fare (₹):</strong> <?= $ride['fare'] ?></p>
-                    <p><strong>Driver:</strong> <?= htmlspecialchars($ride['driver_name']) ?></p>
-                    <p><strong>ID Proof:</strong> <a href="<?= htmlspecialchars($ride['id_proof']) ?>" target="_blank">View</a></p>
-                    <p><strong>License:</strong> <a href="<?= htmlspecialchars($ride['driving_license']) ?>" target="_blank">View</a></p>
+<?php include '../includes/header.php'; ?>
 
-                    <form method="POST" class="book-form">
-                        <input type="hidden" name="ride_id" value="<?= $ride['id'] ?>">
-                        <button type="submit">Book Seat</button>
-                    </form>
-                </div>
-            <?php endwhile; ?>
-        <?php else: ?>
-            <p>No rides available at the moment.</p>
-        <?php endif; ?>
-    </div>
+<div class="ride-list-container">
+    <h2>Available Rides</h2>
+    <?php if (!empty($message)) echo "<p class='message'>$message</p>"; ?>
+
+    <?php if ($result->num_rows > 0): ?>
+        <?php while ($ride = $result->fetch_assoc()): ?>
+            <div class="ride-card">
+                <p><strong>From:</strong> <?= htmlspecialchars($ride['pickup_location']) ?></p>
+                <p><strong>To:</strong> <?= htmlspecialchars($ride['drop_location']) ?></p>
+                <p><strong>Date:</strong> <?= htmlspecialchars($ride['travel_date']) ?></p>
+                <p><strong>Time:</strong> <?= htmlspecialchars($ride['travel_time']) ?></p>
+                <p><strong>Seats Available:</strong> <?= $ride['seats_available'] ?></p>
+                <p><strong>Fare (₹):</strong> <?= $ride['fare'] ?></p>
+                <p><strong>Driver:</strong> <?= htmlspecialchars($ride['driver_name']) ?></p>
+                <p><strong>ID Proof:</strong> <a href="<?= htmlspecialchars($ride['id_proof']) ?>" target="_blank">View</a></p>
+                <p><strong>License:</strong> <a href="<?= htmlspecialchars($ride['driving_license']) ?>" target="_blank">View</a></p>
+
+                <form method="GET" action="ride_details.php" class="book-form">
+                    <input type="hidden" name="ride_id" value="<?= $ride['id'] ?>">
+                    <button type="submit">Book Seat</button>
+                </form>
+            </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <p>No rides available at the moment.</p>
+    <?php endif; ?>
+</div>
+
 </body>
 </html>
