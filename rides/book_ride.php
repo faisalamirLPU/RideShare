@@ -26,12 +26,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['ride_id'])) {
     if ($ride && $ride['seats_available'] > 0) {
         $seats_booked = 1;
         $booking_status = 'pending';
-        $payment_status = 'unpaid';
+        $payment_status = 'pending'; // Ensuring value is set correctly
 
         // Insert booking
         $stmt = $conn->prepare("INSERT INTO bookings (ride_id, passenger_id, seats_booked, booking_status, payment_status, created_at) 
                                 VALUES (?, ?, ?, ?, ?, NOW())");
-        $stmt->bind_param("iiiss", $ride_id, $passenger_id, $seats_booked, $booking_status, $payment_status);
+
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+
+        $bind = $stmt->bind_param("iiiss", $ride_id, $passenger_id, $seats_booked, $booking_status, $payment_status);
+        if ($bind === false) {
+            die("Bind failed: " . $stmt->error);
+        }
 
         if ($stmt->execute()) {
             // Reduce available seat count

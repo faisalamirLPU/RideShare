@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['ride_id'], $_POST['se
 
     if ($ride && $ride['seats_available'] >= $seats_booked) {
         $booking_status = 'pending';
-        $payment_status = 'unpaid';
+        $payment_status = 'pending';
 
         $stmt = $conn->prepare("INSERT INTO bookings (ride_id, passenger_id, seats_booked, booking_status, payment_status, created_at)
                                 VALUES (?, ?, ?, ?, ?, NOW())");

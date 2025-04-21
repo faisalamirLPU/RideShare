@@ -30,12 +30,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cancel_booking'])) {
 
 // Fetch passenger's booked rides
 $sql = "SELECT b.id AS booking_id, r.pickup_location, r.drop_location, r.travel_date, r.travel_time, r.fare, 
-        u.name AS driver_name, b.booking_status 
+        u.name AS driver_name, b.booking_status, b.payment_status 
         FROM bookings b
         JOIN rides r ON b.ride_id = r.id
         JOIN users u ON r.driver_id = u.id
         WHERE b.passenger_id = $passenger_id
         ORDER BY FIELD(b.booking_status, 'pending', 'confirmed', 'completed', 'cancelled')";
+
 
 $result = $conn->query($sql);
 
@@ -61,41 +62,49 @@ if (!$result) {
   </style>
 </head>
 <body class="text-white min-h-screen bg-black bg-opacity-50 backdrop-blur-md">
-  <?php include '../includes/header.php'; ?>
+<?php include '../includes/header.php'; ?>
 
-  <div class="max-w-5xl mx-auto px-6 py-12">
-    <h2 class="text-4xl font-bold mb-8">📋 My Bookings</h2>
+<div class="max-w-5xl mx-auto px-6 py-12">
+  <h2 class="text-4xl font-bold mb-8">📋 My Bookings</h2>
 
-    <?php if (!empty($message)): ?>
-      <div class="mb-4 p-4 bg-green-600 text-white rounded-lg shadow">
-        <?php echo htmlspecialchars($message); ?>
-      </div>
-    <?php endif; ?>
+  <?php if (!empty($message)): ?>
+    <div class="mb-4 p-4 bg-green-600 text-white rounded-lg shadow">
+      <?php echo htmlspecialchars($message); ?>
+    </div>
+  <?php endif; ?>
 
-    <?php if ($result->num_rows > 0): ?>
-      <ul class="space-y-6">
-        <?php while($row = $result->fetch_assoc()): ?>
-          <li class="bg-white/10 border border-white/20 rounded-2xl p-6 shadow-md">
-            <div><strong>Driver:</strong> <?php echo htmlspecialchars($row['driver_name']); ?></div>
-            <div><strong>From:</strong> <?php echo htmlspecialchars($row['pickup_location']); ?></div>
-            <div><strong>To:</strong> <?php echo htmlspecialchars($row['drop_location']); ?></div>
-            <div><strong>Date:</strong> <?php echo $row['travel_date']; ?> @ <?php echo $row['travel_time']; ?></div>
-            <div><strong>Fare:</strong> ₹<?php echo number_format($row['fare'], 2); ?></div>
-            <div><strong>Status:</strong> <?php echo ucfirst($row['booking_status']); ?></div>
+  <?php if ($result->num_rows > 0): ?>
+    <ul class="space-y-6">
+      <?php while($row = $result->fetch_assoc()): ?>
+        <li class="bg-white/10 border border-white/20 rounded-2xl p-6 shadow-md">
+          <div><strong>Driver:</strong> <?php echo htmlspecialchars($row['driver_name']); ?></div>
+          <div><strong>From:</strong> <?php echo htmlspecialchars($row['pickup_location']); ?></div>
+          <div><strong>To:</strong> <?php echo htmlspecialchars($row['drop_location']); ?></div>
+          <div><strong>Date:</strong> <?php echo $row['travel_date']; ?> @ <?php echo $row['travel_time']; ?></div>
+          <div><strong>Fare:</strong> ₹<?php echo number_format($row['fare'], 2); ?></div>
+          <div><strong>Status:</strong> <?php echo ucfirst($row['booking_status']); ?></div>
+          <div><strong>Payment:</strong> <?php echo ucfirst($row['payment_status']); ?></div>
 
-            <?php if ($row['booking_status'] === 'pending' || $row['booking_status'] === 'confirmed'): ?>
-              <form method="POST" class="mt-4">
-                <input type="hidden" name="booking_id" value="<?php echo $row['booking_id']; ?>">
-                <button type="submit" name="cancel_booking" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md">Cancel Booking</button>
-              </form>
-            <?php endif; ?>
-          </li>
-        <?php endwhile; ?>
-      </ul>
-    <?php else: ?>
-      <p class="text-gray-300 text-lg">You have no bookings yet.</p>
-    <?php endif; ?>
-  </div>
+          <?php if ($row['booking_status'] === 'pending' || $row['booking_status'] === 'confirmed'): ?>
+            <form method="POST" class="mt-4 inline-block">
+              <input type="hidden" name="booking_id" value="<?php echo $row['booking_id']; ?>">
+              <button type="submit" name="cancel_booking" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md">Cancel Booking</button>
+            </form>
+          <?php endif; ?>
+
+          <?php if ($row['payment_status'] === 'pending' && ($row['booking_status'] === 'confirmed' || $row['booking_status'] === 'pending')): ?>
+            <form method="GET" action="make_payment.php" class="mt-4 inline-block ml-4">
+              <input type="hidden" name="booking_id" value="<?php echo $row['booking_id']; ?>">
+              <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">Make Payment</button>
+            </form>
+          <?php endif; ?>
+        </li>
+      <?php endwhile; ?>
+    </ul>
+  <?php else: ?>
+    <p class="text-gray-300 text-lg">You have no bookings yet.</p>
+  <?php endif; ?>
+</div>
 
   <!-- Chatbot -->
   <div class="fixed bottom-6 right-6 z-50">

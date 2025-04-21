@@ -7,23 +7,41 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
-// Handle approval or rejection
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['driver_id'])) {
-    $driver_id = intval($_POST['driver_id']);
-    $action = $_POST['action'] === 'approve' ? 'approved' : 'rejected';
+$message = "";
 
-    $update_query = "UPDATE drivers SET verified = ? WHERE id = ?";
-    $stmt = $conn->prepare($update_query);
-    $stmt->bind_param("si", $action, $driver_id);
-    $stmt->execute();
-    $stmt->close();
+// Handle approval or rejection
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['driver_id'], $_POST['action'])) {
+    $driver_id = intval($_POST['driver_id']);
+    $action_raw = $_POST['action'];
+
+    if ($action_raw === 'approve') {
+        $action = 'approved';
+    } elseif ($action_raw === 'reject') {
+        $action = 'rejected';
+    } else {
+        $action = '';
+    }
+
+    if (!empty($action)) {
+        $update_query = "UPDATE drivers SET verified = ? WHERE id = ?";
+        $stmt = $conn->prepare($update_query);
+        $stmt->bind_param("si", $action, $driver_id);
+        if ($stmt->execute()) {
+            $message = "Driver verification status updated successfully.";
+        } else {
+            $message = "Failed to update driver status.";
+        }
+        $stmt->close();
+    } else {
+        $message = "Invalid action.";
+    }
 }
 
-// Fetch pending drivers
+// Fetch all drivers
 $query = "SELECT d.*, u.name AS full_name, u.email 
           FROM drivers d 
           JOIN users u ON d.user_id = u.id 
-          WHERE d.verified = 'pending'";
+          ORDER BY d.verified = 'pending' DESC, d.id DESC";
 
 $result = mysqli_query($conn, $query);
 
@@ -31,19 +49,24 @@ if (!$result) {
     die("Query Error: " . mysqli_error($conn));
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Verify Drivers</title>
+    <title>Driver Verification</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body>
 <?php include 'include/header.php'; ?>
 
 <div class="p-8">
-    <h2 class="text-2xl font-bold mb-4">Pending Driver Applications</h2>
+    <h2 class="text-2xl font-bold mb-4">Driver Applications</h2>
+
+    <?php if (!empty($message)): ?>
+        <div class="mb-4 p-3 rounded bg-blue-100 text-blue-700 border border-blue-300">
+            <?= htmlspecialchars($message) ?>
+        </div>
+    <?php endif; ?>
 
     <?php if ($result->num_rows > 0): ?>
         <table class="w-full border-collapse bg-white shadow-md rounded-lg">
@@ -53,7 +76,8 @@ if (!$result) {
                     <th class="p-3 border">Email</th>
                     <th class="p-3 border">Vehicle</th>
                     <th class="p-3 border">Proofs</th>
-                    <th class="p-3 border">Actions</th>
+                    <th class="p-3 border">Status</th>
+                    <th class="p-3 border">Change Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -63,9 +87,18 @@ if (!$result) {
                         <td class="p-3 border"><?= htmlspecialchars($row['email']) ?></td>
                         <td class="p-3 border"><?= htmlspecialchars($row['vehicle_model']) ?> (<?= htmlspecialchars($row['vehicle_number']) ?>)</td>
                         <td class="p-3 border">
-                            <a href="../uploads/<?= $row['id_proof'] ?>" target="_blank">ID Proof</a> |
-                            <a href="../uploads/<?= $row['driving_license'] ?>" target="_blank">License</a> |
-                            <a href="../uploads/<?= $row['vehicle_image'] ?>" target="_blank">Vehicle Image</a>
+                            <a href="../uploads/<?= urlencode($row['id_proof']) ?>" target="_blank">ID Proof</a> |
+                            <a href="../uploads/<?= urlencode($row['driving_license']) ?>" target="_blank">License</a> |
+                            <a href="../uploads/<?= urlencode($row['vehicle_image']) ?>" target="_blank">Vehicle Image</a>
+                        </td>
+                        <td class="p-3 border">
+                            <?php if ($row['verified'] === 'approved'): ?>
+                                <span class="text-green-600 font-semibold">Approved</span>
+                            <?php elseif ($row['verified'] === 'rejected'): ?>
+                                <span class="text-red-600 font-semibold">Rejected</span>
+                            <?php else: ?>
+                                <span class="text-yellow-600 font-semibold">Pending</span>
+                            <?php endif; ?>
                         </td>
                         <td class="p-3 border">
                             <form method="POST" style="display:inline-block;">
@@ -79,7 +112,7 @@ if (!$result) {
             </tbody>
         </table>
     <?php else: ?>
-        <p>No pending driver applications at the moment.</p>
+        <p>No driver applications found.</p>
     <?php endif; ?>
 </div>
 

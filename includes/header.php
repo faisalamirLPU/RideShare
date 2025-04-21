@@ -18,12 +18,16 @@ $userName = $_SESSION['name'] ?? 'User';
       background-size: cover;
       background-position: center;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      
+    }
+    .z-index{
+      z-index: 9999999999999999;
     }
   </style>
 </head>
 <body>
 <nav class="backdrop-blur-md bg-black/60 p-5 px-10 flex justify-between items-center shadow-lg">
-  <h1 class="text-4xl font-bold tracking-wider text-yellow-400">Ride<span class="text-white">Share</span></h1>
+  <h1 class="text-4xl font-bold tracking-wider text-yellow-400"><a href="/rideshare/index.php">Ride<span class="text-white">Share</a></span></h1>
 
   <ul class="flex space-x-8 text-lg font-semibold items-center text-white relative">
     <li><a href="/rideshare/index.php" class="hover:text-yellow-400 transition">Home</a></li>
@@ -38,9 +42,12 @@ $userName = $_SESSION['name'] ?? 'User';
           <span><?= htmlspecialchars($userName) ?></span>
           <svg class="w-4 h-4 fill-current mt-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.25 7.5L10 12.25L14.75 7.5H5.25Z"/></svg>
         </button>
-        <ul id="dropdownMenu" class="absolute right-0 mt-2 bg-white text-black rounded shadow-lg hidden min-w-[150px] z-50">
+        <ul id="dropdownMenu" class="z-index absolute right-0 mt-2 bg-white text-black rounded shadow-lg hidden min-w-[150px] z-50">
           <li><a href="/rideshare/dashboard.php" class="block px-4 py-2 hover:bg-yellow-100">Dashboard</a></li>
           <li><a href="/rideshare/users/my_bookings.php" class="block px-4 py-2 hover:bg-yellow-100">My Rides</a></li>
+          <li><a href="/rideshare/users/my_offered_rides.php" class="block px-4 py-2 hover:bg-yellow-100">My Offered Rides</a></li>
+          <li><a href="/rideshare/users/drivers_view_profile.php" class="block px-4 py-2 hover:bg-yellow-100">My Driver Profile</a></li>
+
           
           <li><a href="/rideshare/auth/logout.php" class="block px-4 py-2 hover:bg-yellow-100">Logout</a></li>
         </ul>
