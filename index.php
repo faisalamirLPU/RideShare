@@ -13,6 +13,29 @@
       background-position: center;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
+
+    .autocomplete-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: white;
+      border: 1px solid #ddd;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 10;
+    }
+
+    .autocomplete-suggestions li {
+      padding: 8px;
+      cursor: pointer;
+      background-color: white;
+      color: #333;
+    }
+
+    .autocomplete-suggestions li:hover {
+      background-color: #f3f3f3;
+    }
   </style>
 </head>
 
@@ -33,11 +56,11 @@
     <form action="rides/book_ride.php" method="POST" class="space-y-6">
       <div>
         <label class="block font-semibold text-white mb-2">Pickup Location</label>
-        <input type="text" name="pickup" class="w-full p-4 rounded-xl bg-white/20 text-white placeholder-white/70 focus:ring-2 focus:ring-yellow-400 border border-white/30" placeholder="Enter pickup point" required>
+        <input type="text" name="pickup" id="pickup" class="w-full p-4 rounded-xl bg-white/20 text-white placeholder-white/70 focus:ring-2 focus:ring-yellow-400 border border-white/30" placeholder="Enter pickup point" required>
       </div>
       <div>
         <label class="block font-semibold text-white mb-2">Drop Location</label>
-        <input type="text" name="drop" class="w-full p-4 rounded-xl bg-white/20 text-white placeholder-white/70 focus:ring-2 focus:ring-yellow-400 border border-white/30" placeholder="Enter destination" required>
+        <input type="text" name="drop" id="drop" class="w-full p-4 rounded-xl bg-white/20 text-white placeholder-white/70 focus:ring-2 focus:ring-yellow-400 border border-white/30" placeholder="Enter destination" required>
       </div>
       
       <button type="submit" class="w-full bg-yellow-400 hover:bg-yellow-500 text-black p-4 rounded-full font-bold text-lg transition">🔍 Search Rides</button>
@@ -58,6 +81,70 @@
   </section>
 
  <?php include('./includes/footer.php') ?>
+
+ <script>
+  <script>
+  // Add event listeners for pickup and drop inputs
+  document.getElementById('pickup').addEventListener('input', function() {
+    let pickupInput = this.value;
+    if (pickupInput.length >= 3) {
+      fetchLocations(pickupInput, 'pickup');
+    }
+  });
+
+  document.getElementById('drop').addEventListener('input', function() {
+    let dropInput = this.value;
+    if (dropInput.length >= 3) {
+      fetchLocations(dropInput, 'drop');
+    }
+  });
+
+  // Fetch locations from the PHP script
+  function fetchLocations(query, type) {
+    fetch('search_locations.php?query=' + query + '&type=' + type)
+      .then(response => response.json())
+      .then(data => {
+        showSuggestions(data, type);
+      })
+      .catch(error => console.error('Error fetching locations:', error));
+  }
+
+  // Display the fetched suggestions in the dropdown
+  function showSuggestions(locations, type) {
+    const inputElement = type === 'pickup' ? document.getElementById('pickup') : document.getElementById('drop');
+    
+    // Remove any existing suggestions list
+    const existingSuggestions = inputElement.parentNode.querySelector('ul');
+    if (existingSuggestions) {
+      existingSuggestions.remove();
+    }
+
+    if (locations.length === 0) {
+      return; // No suggestions to display
+    }
+
+    // Create the suggestion list
+    const suggestionList = document.createElement('ul');
+    suggestionList.classList.add('autocomplete-suggestions'); // You can reuse your existing styles
+
+    locations.forEach(location => {
+      const listItem = document.createElement('li');
+      listItem.classList.add('px-4', 'py-2', 'cursor-pointer');
+      listItem.innerText = location;
+
+      listItem.addEventListener('click', function() {
+        inputElement.value = location; // Set input value when item is clicked
+        suggestionList.remove(); // Remove the suggestions
+      });
+
+      suggestionList.appendChild(listItem);
+    });
+
+    inputElement.parentNode.appendChild(suggestionList);
+  }
+</script>
+
+ </script>
 
 </body>
 

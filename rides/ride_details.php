@@ -69,7 +69,7 @@ if (!$ride) {
 <head>
     <meta charset="UTF-8">
     <title>Ride Details</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
     function updateFare() {
         const farePerSeat = <?= $ride['fare'] ?>;
@@ -78,32 +78,48 @@ if (!$ride) {
     }
     </script>
 </head>
-<body>
-<?php include '../includes/header.php'; ?>
-<div class="ride-details-container">
-    <h2>Ride Details</h2>
-    <?php if (!empty($message)) echo "<p class='message'>$message</p>"; ?>
-    <p><strong>Pickup:</strong> <?= htmlspecialchars($ride['pickup_location']) ?></p>
-    <p><strong>Drop:</strong> <?= htmlspecialchars($ride['drop_location']) ?></p>
-    <p><strong>Date:</strong> <?= $ride['travel_date'] ?></p>
-    <p><strong>Time:</strong> <?= $ride['travel_time'] ?></p>
-    <p><strong>Available Seats:</strong> <?= $ride['seats_available'] ?></p>
-    <p><strong>Fare per seat:</strong> ₹<?= $ride['fare'] ?></p>
-    <p><strong>Driver:</strong> <?= $ride['driver_name'] ?></p>
-    <p><strong>ID Proof:</strong> <a href="<?= $ride['id_proof'] ?>" target="_blank">View</a></p>
-    <p><strong>License:</strong> <a href="<?= $ride['driving_license'] ?>" target="_blank">View</a></p>
+<body class="bg-black text-white font-sans bg-opacity-50 backdrop-blur-md">
+    <?php include '../includes/header.php'; ?>
 
-    <form method="POST">
-        <input type="hidden" name="ride_id" value="<?= $ride['id'] ?>">
-        <label for="seats">Number of seats to book:</label>
-        <select id="seats" name="seats" onchange="updateFare()">
-            <?php for ($i = 1; $i <= $ride['seats_available']; $i++): ?>
-                <option value="<?= $i ?>"><?= $i ?></option>
-            <?php endfor; ?>
-        </select>
-        <p><strong>Total Fare:</strong> <span id="totalFare">₹<?= $ride['fare'] ?></span></p>
-        <button type="submit">Confirm Booking</button>
-    </form>
-</div>
+    <div class="max-w-4xl mx-auto px-4 py-16">
+        <h2 class="text-4xl font-extrabold text-center mb-8 drop-shadow">Ride Details</h2>
+
+        <?php if (!empty($message)): ?>
+        <div class="bg-yellow-400 text-black px-6 py-3 rounded-lg mb-6 shadow-lg text-center font-semibold">
+            <?= htmlspecialchars($message) ?>
+        </div>
+        <?php endif; ?>
+
+        <div class="bg-white/10 p-6 rounded-xl backdrop-blur-md border border-white/20 shadow-xl">
+            <p><strong>Pickup:</strong> <?= htmlspecialchars($ride['pickup_location']) ?></p>
+            <p><strong>Drop:</strong> <?= htmlspecialchars($ride['drop_location']) ?></p>
+            <p><strong>Date:</strong> <?= $ride['travel_date'] ?></p>
+            <p><strong>Time:</strong> <?= $ride['travel_time'] ?></p>
+            <p><strong>Available Seats:</strong> <?= $ride['seats_available'] ?></p>
+            <p><strong>Fare per seat:</strong> ₹<?= $ride['fare'] ?></p>
+            <p><strong>Driver:</strong> <?= $ride['driver_name'] ?></p>
+            <p><strong>ID Proof:</strong> <a href="<?= $ride['id_proof'] ?>" target="_blank" class="text-yellow-300 underline">View</a></p>
+            <p><strong>License:</strong> <a href="<?= $ride['driving_license'] ?>" target="_blank" class="text-yellow-300 underline">View</a></p>
+
+            <form method="POST" class="mt-6">
+                <input type="hidden" name="ride_id" value="<?= $ride['id'] ?>">
+
+                <label for="seats" class="block text-lg font-semibold mb-2">Number of seats to book:</label>
+                <select id="seats" name="seats" class="w-full p-3 rounded-lg bg-black text-white border border-white/30 mb-4" onchange="updateFare()">
+                    <?php for ($i = 1; $i <= $ride['seats_available']; $i++): ?>
+                        <option value="<?= $i ?>"><?= $i ?></option>
+                    <?php endfor; ?>
+                </select>
+
+                <p><strong>Total Fare:</strong> <span id="totalFare" class="text-xl text-yellow-400">₹<?= $ride['fare'] ?></span></p>
+                
+                <button type="submit" class="w-full mt-6 bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 px-6 rounded-full shadow-md transition">
+                    Confirm Booking
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <?php include '../includes/footer.php'; ?>
 </body>
 </html>
