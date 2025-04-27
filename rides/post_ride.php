@@ -2,7 +2,6 @@
 session_start();
 include '../database/db_config.php';
 
-// Redirect if user is not logged in
 if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'user') {
     header("Location: ../auth/login.php");
     exit();
@@ -10,7 +9,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] !== 'user') {
 
 $user_id = $_SESSION['user_id'];
 
-// Check if driver profile exists
 $driver_query = $conn->prepare("SELECT id, verified FROM drivers WHERE user_id = ?");
 $driver_query->bind_param("i", $user_id);
 $driver_query->execute();
@@ -18,20 +16,17 @@ $driver_result = $driver_query->get_result();
 $driver = $driver_result->fetch_assoc();
 $driver_query->close();
 
-// Redirect to create driver profile if not exists
 if (!$driver) {
     header("Location: create_driver_profile.php");
     exit();
 }
 
-// If profile is pending or rejected
 if ($driver['verified'] !== 'approved') {
     $message = "Your driver profile is currently <strong>{$driver['verified']}</strong>. You cannot post rides until it is approved.";
 } else {
     $driver_id = $driver['id'];
     $message = "";
 
-    // Handle form submission
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pickup = trim($_POST['source']);
         $drop = trim($_POST['destination']);
@@ -61,39 +56,69 @@ if ($driver['verified'] !== 'approved') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Post a Ride - Rideshare</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
+  <meta charset="UTF-8">
+  <title>Offer a Ride - RideShare</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-image: url('../car.png');
+      background-size: cover;
+      background-position: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  </style>
 </head>
-<body>
-<?php include '../includes/header.php'; ?>
-<div class="ride-form-container">
-    <h2>Post a Ride</h2>
-    <?php if (!empty($message)) echo "<p class='message'>$message</p>"; ?>
+<body class="text-white min-h-screen bg-black bg-opacity-40 backdrop-blur-md">
+  <?php include '../includes/header.php'; ?>
+
+  <div class="max-w-3xl mx-auto px-4 pt-2 pb-16">
+    <h2 class="text-4xl font-extrabold text-center mb-10 drop-shadow">🚘 Offer a Ride</h2>
+
+    <?php if (!empty($message)): ?>
+      <div class="bg-yellow-400 text-black px-6 py-3 rounded-lg mb-6 shadow-lg text-center font-semibold">
+        <?= $message ?>
+      </div>
+    <?php endif; ?>
 
     <?php if ($driver && $driver['verified'] === 'approved'): ?>
-    <form method="POST">
-        <label>Pickup Location:</label>
-        <input type="text" name="source" required>
+      <form method="POST" class="bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-2xl border border-white/20 space-y-6">
+        <div>
+          <label class="block mb-2 font-semibold">Pickup Location:</label>
+          <input type="text" name="source" required class="w-full px-4 py-2 rounded-lg text-black">
+        </div>
 
-        <label>Drop Location:</label>
-        <input type="text" name="destination" required>
+        <div>
+          <label class="block mb-2 font-semibold">Drop Location:</label>
+          <input type="text" name="destination" required class="w-full px-4 py-2 rounded-lg text-black">
+        </div>
 
-        <label>Date:</label>
-        <input type="date" name="date" required>
+        <div>
+          <label class="block mb-2 font-semibold">Date:</label>
+          <input type="date" name="date" required class="w-full px-4 py-2 rounded-lg text-black">
+        </div>
 
-        <label>Time:</label>
-        <input type="time" name="time" required>
+        <div>
+          <label class="block mb-2 font-semibold">Time:</label>
+          <input type="time" name="time" required class="w-full px-4 py-2 rounded-lg text-black">
+        </div>
 
-        <label>Seats Available:</label>
-        <input type="number" name="seats" min="1" required>
+        <div>
+          <label class="block mb-2 font-semibold">Seats Available:</label>
+          <input type="number" name="seats" min="1" required class="w-full px-4 py-2 rounded-lg text-black">
+        </div>
 
-        <label>Fare per Seat (₹):</label>
-        <input type="number" name="fare" min="1" required>
+        <div>
+          <label class="block mb-2 font-semibold">Fare per Seat (₹):</label>
+          <input type="number" step="0.01" name="fare" min="1" required class="w-full px-4 py-2 rounded-lg text-black">
+        </div>
 
-        <button type="submit">Post Ride</button>
-    </form>
+        <button type="submit" class="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 px-6 rounded-full shadow-md transition">✅ Post Ride</button>
+      </form>
+    <?php else: ?>
+      <p class="text-center text-lg text-red-200 mt-10"><?= $message ?></p>
     <?php endif; ?>
-</div>
+  </div>
+
+  <?php include '../includes/footer.php'; ?>
 </body>
 </html>

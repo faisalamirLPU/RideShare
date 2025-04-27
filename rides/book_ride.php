@@ -47,8 +47,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['ride_id'])) {
     }
 }
 
+// Updated query: Fetch profile_picture also
 $query = "SELECT r.id, r.pickup_location, r.drop_location, r.travel_date, r.travel_time, r.seats_available, r.fare,
-                 u.name AS driver_name, d.id_proof, d.driving_license
+                 u.name AS driver_name, d.id_proof, d.driving_license, d.profile_picture
           FROM rides r
           JOIN drivers d ON r.driver_id = d.id
           JOIN users u ON d.user_id = u.id
@@ -100,14 +101,23 @@ $user_phone = $userData ? $userData['phone'] : "Unavailable";
     <?php if ($result->num_rows > 0): ?>
       <div class="grid md:grid-cols-2 gap-6">
         <?php while ($ride = $result->fetch_assoc()): ?>
-          <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-2xl border border-white/20">
+          <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-2xl border border-white/20 relative">
+            <!-- Driver Profile Picture -->
+            <div class="absolute top-4 right-4">
+              <img 
+                src="<?= !empty($ride['profile_picture']) ? '/RideShare/uploads/' . htmlspecialchars(basename($ride['profile_picture'])) : '/RideShare/assets/default-profile.png' ?>" 
+                alt="Driver Profile" 
+                class="w-16 h-16 object-cover rounded-full border-2 border-yellow-400 shadow-lg"
+              >
+            </div>
+
             <p><strong>From:</strong> <?= htmlspecialchars($ride['pickup_location']) ?></p>
             <p><strong>To:</strong> <?= htmlspecialchars($ride['drop_location']) ?></p>
             <p><strong>Date:</strong> <?= htmlspecialchars($ride['travel_date']) ?></p>
             <p><strong>Time:</strong> <?= htmlspecialchars($ride['travel_time']) ?></p>
             <p><strong>Seats Available:</strong> <?= $ride['seats_available'] ?></p>
             <p><strong>Fare (₹):</strong> <?= $ride['fare'] ?></p>
-            <p><strong>Driver:</strong> <?= htmlspecialchars($ride['driver_name']) ?></p>
+            <p><strong>Driver Name:</strong> <?= htmlspecialchars($ride['driver_name']) ?></p>
             <p><strong>Your Phone:</strong> <?= htmlspecialchars($user_phone) ?></p>
 
             <div class="mt-4 space-x-4">
